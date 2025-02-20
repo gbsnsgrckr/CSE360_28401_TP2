@@ -13,26 +13,29 @@ public class Answer {
 	private User author;
 
 	public Answer(Integer id, String text, Integer authorId, LocalDateTime createdOn, LocalDateTime updatedOn,
-			User author) {
+			boolean isPrivate, User author) {
 		this.id = id;
 		this.text = text;
 		this.authorId = authorId;
 		this.createdOn = createdOn;
 		this.updatedOn = updatedOn;
+		this.isPrivate = isPrivate;
 		this.author = author;
 	}
 
-	public Answer(Integer id, String text, Integer authorId, LocalDateTime createdOn, LocalDateTime updatedOn) {
+	public Answer(Integer id, String text, Integer authorId, LocalDateTime createdOn, LocalDateTime updatedOn, Boolean isPrivate) {
 		this.id = id;
 		this.text = text;
 		this.authorId = authorId;
 		this.createdOn = createdOn;
 		this.updatedOn = updatedOn;
+		this.isPrivate = false;
 	}
 
-	public Answer(String text, Integer authorId) {
+	public Answer(String text, Integer authorId, isPrivate) {
 		this.text = text;
 		this.authorId = authorId;
+		this.isPrivate = isPrivate;
 	}
 
 	public Answer(String text) {
@@ -58,6 +61,10 @@ public class Answer {
 
 	public LocalDateTime getUpdatedOn() {
 		return updatedOn;
+	}
+
+	public boolean getIsPrivate() {
+		return isPrivate;
 	}
 
 	public User getAuthor() {
@@ -96,9 +103,13 @@ public class Answer {
 		this.author = author;
 	}
 
+	public void setPrivate(boolean isPrivate) {
+		this.isPrivate = isPrivate;
+	}
+
 	public String toString() {
 		return String.format(
-				"\nANSWER: \nID:\n	%s\nText:\n		%s\nAuthorId:\n	  %s\nAuthor:\n 	%s\nCreated On:\n	%s\nUpdated On:\n	%s\n",
+				"\nANSWER: \nID:\n	%s\nText:\n		%s\nAuthorId:\n	  %s\nAuthor:\n 	%s\nis Private:\n	%b\nCreated On:\n	%s\nUpdated On:\n	%s\n",
 				id, text, authorId, author, createdOn, updatedOn);
 	}
 
