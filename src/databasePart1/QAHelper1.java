@@ -72,7 +72,8 @@ public class QAHelper1 {
 		// Create the answer database
 		String answerTable = "CREATE TABLE IF NOT EXISTS cse360answer ("
 				+ "id INT AUTO_INCREMENT NOT NULL PRIMARY KEY, " + "text TEXT DEFAULT NULL, " + "author INT, "
-				+ "created_on DATETIME DEFAULT CURRENT_TIMESTAMP, " + "updated_on DATETIME DEFAULT CURRENT_TIMESTAMP)";
+				+ "created_on DATETIME DEFAULT CURRENT_TIMESTAMP, " + "updated_on DATETIME DEFAULT CURRENT_TIMESTAMP, "
+				+ "is_private BOOLEAN DEFAULT FALSE)";
 //				+ "FOREIGN KEY (author) REFERENCES cse360users(id))";		// Currently not linked to user database
 		statement.execute(answerTable);
 
@@ -114,10 +115,11 @@ public class QAHelper1 {
 
 	// Registers a new answer in the database.
 	public void registerAnswer(Answer answer, int questionID) throws SQLException {
-		String insertAnswer = "INSERT INTO cse360answer (text, author) VALUES (?, ?)";
+		String insertAnswer = "INSERT INTO cse360answer (text, author, is_private) VALUES (?, ?, ?)";
 		try (PreparedStatement pstmt = connection.prepareStatement(insertAnswer, Statement.RETURN_GENERATED_KEYS)) {
 			pstmt.setString(1, answer.getText());
-			pstmt.setInt(2, answer.getAuthorId());
+			pstmt.setInt(2, answer.getAuthor());
+			pstmt.setBoolean(3, answer.getIsPrivate());
 			pstmt.executeUpdate();
 
 			ResultSet newID = pstmt.getGeneratedKeys();
@@ -311,11 +313,11 @@ public class QAHelper1 {
 				Timestamp updated = rs.getTimestamp("updated_On");
 				// Convert to LocalDateTime format
 				LocalDateTime updatedOn = updated != null ? updated.toLocalDateTime() : null;
-				
+				boolean isPrivate = rs.getBoolean("is_private");
 				User author = databaseHelper.getUser(authorId);
 
 				// Create a new answer object with the pulled info
-				Answer answer = new Answer(id, text, authorId, createdOn, updatedOn, author);
+				Answer answer = new Answer(id, text, author, createdOn, updatedOn, isPrivate);
 
 				// Return the answer object
 				return answer;
@@ -449,11 +451,12 @@ public class QAHelper1 {
 				Timestamp updated = rs.getTimestamp("updated_On");
 				// Convert to LocalDateTime format
 				LocalDateTime updatedOn = updated != null ? updated.toLocalDateTime() : null;
+				boolean isPrivate = rs.getBoolean("is_private");
 				
 				User author = databaseHelper.getUser(authorId);
 
 				// Create a new answer object with the pulled info
-				Answer answer = new Answer(id, text, authorId, createdOn, updatedOn, author);
+				Answer answer = new Answer(id, text, authorId, createdOn, updatedOn, author, isPrivate);
 
 				// Add the new answer object to the list of answer objects
 				answers.add(answer);
@@ -505,9 +508,10 @@ public class QAHelper1 {
 						Timestamp updated = newRs.getTimestamp("updated_On");
 						// Convert to LocalDateTime format
 						LocalDateTime updatedOn = updated != null ? updated.toLocalDateTime() : null;
+						boolean isPrivate = rs.getBoolean("is_private");
 
 						// Create a new answer object with the pulled info
-						Answer answer = new Answer(id, text, author, createdOn, updatedOn);
+						Answer answer = new Answer(id, text, author, createdOn, updatedOn, isPrivate);
 
 						// Add the new answer object to the list of answer objects
 						answers.add(answer);
